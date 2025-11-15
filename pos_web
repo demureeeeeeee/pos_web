@@ -1,1 +1,27 @@
+# render.yaml — connect this to your GitHub repo in Render
+services:
+- type: postgres
+name: pos_web-db
+plan: starter # free tier if available
+env_vars: []
 
+
+- type: web_service
+name: pos_web-server
+env: node
+# Replace <GIT_REPO> with your GitHub repo slug (owner/repo)
+repo: <GIT_REPO>
+branch: main
+buildCommand: "cd server && npm install && npm run build"
+startCommand: "cd server && npm start"
+plan: starter
+envVars:
+- key: DATABASE_URL
+fromDatabase:
+name: pos_web-db
+property: connectionString
+- key: JWT_SECRET
+value: "change_this_to_a_secure_secret"
+- key: NODE_ENV
+value: "production"
+autoDeploy: true
